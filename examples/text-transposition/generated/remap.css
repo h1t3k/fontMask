@@ -1,0 +1,27 @@
+@font-face {
+  font-family: "GS S0";
+  src: url("DejaVuSans-s0.woff2") format("woff2");
+  font-display: block; /* never flash the gamma layer */
+}
+@font-face {
+  font-family: "GS S1";
+  src: url("DejaVuSans-s1.woff2") format("woff2");
+  font-display: block; /* never flash the gamma layer */
+}
+@font-face {
+  font-family: "GS S2";
+  src: url("DejaVuSans-s2.woff2") format("woff2");
+  font-display: block; /* never flash the gamma layer */
+}
+@font-face {
+  font-family: "GS S3";
+  src: url("DejaVuSans-s3.woff2") format("woff2");
+  font-display: block; /* never flash the gamma layer */
+}
+.gs-protect { visibility: hidden; white-space: pre-wrap; }
+.gs-fonts-ready .gs-protect { visibility: visible; }
+.gs-s0 { font-family: "GS S0"; }
+.gs-s1 { font-family: "GS S1"; }
+.gs-s2 { font-family: "GS S2"; }
+.gs-s3 { font-family: "GS S3"; }
+.gs-lit { font-family: inherit; } /* lax passthrough: char absent from bit=, rendered by page fallback, VERBATIM in DOM */
