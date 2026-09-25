@@ -1,4 +1,4 @@
-// remap-guard.js — companion to glyphWeave woff2 shards.
+// remap-guard.js — companion to fontMask woff2 shards.
 // 1. Keeps protected blocks hidden until shards load, so the gamma (DOM)
 //    layer is never flashed on a slow or blocked font fetch.
 // 2. Replaces the clipboard payload with a clean notice on copy — the shard

@@ -1,19 +1,19 @@
-# glyphWeave
+# fontMask
 
 **Deterministic Unicode-to-glyph remapping for OpenType and web fonts.**
 
-glyphWeave is a Python CLI for remapping existing font glyphs to alternate
+fontMask is a Python CLI for remapping existing font glyphs to alternate
 Unicode code points without redrawing the glyph outlines.
 
 It can decouple the text stored in a document or webpage from the glyphs
 rendered on screen. When conflicting mappings cannot coexist in a single
-OpenType `cmap`, glyphWeave distributes those mappings across multiple
+OpenType `cmap`, fontMask distributes those mappings across multiple
 deterministic WOFF2 font subsets and generates the supporting browser assets
 needed to render them correctly.
 
 ## What it does
 
-glyphWeave takes three primary inputs:
+fontMask takes three primary inputs:
 
 - **Visible text** — the text the reader should see.
 - **Source font** — the font whose existing glyphs will be remapped.
@@ -84,7 +84,7 @@ mappings.
 An OpenType `cmap` maps a Unicode code point to a glyph.
 
 A single `cmap` cannot map the same Unicode code point to different glyphs at
-different positions. When glyphWeave encounters that situation, it assigns
+different positions. When fontMask encounters that situation, it assigns
 the conflicting mappings to separate font subsets and applies those subsets
 to the corresponding spans in the generated markup.
 
@@ -102,7 +102,7 @@ python3 -m pip install -r requirements.txt
 ## Usage
 
 ```bash
-python3 glyphweave.py \
+python3 fontmask.py \
   ait=visible.txt \
   bit=source-font.ttf \
   gif=underlying.txt \
@@ -123,7 +123,7 @@ Current CLI terminology:
 Run:
 
 ```bash
-python3 glyphweave.py --help
+python3 fontmask.py --help
 ```
 
 for the complete grammar.
@@ -142,7 +142,7 @@ for the complete grammar.
 
 ## Limitations
 
-glyphWeave is not DRM and does not make displayed information impossible to
+fontMask is not DRM and does not make displayed information impossible to
 recover.
 
 Rendered content can still be captured or reconstructed through methods such
@@ -153,7 +153,7 @@ mechanism than as an absolute content-protection system.
 
 ## Development
 
-glyphWeave was developed using an agent-assisted programming workflow with
+fontMask was developed using an agent-assisted programming workflow with
 iterative testing and refinement of the mapping behavior, font transformation,
 browser integration, and generated output.
 
