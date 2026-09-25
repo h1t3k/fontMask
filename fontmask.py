@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-glyphweave.py — standalone cmap-remapping CLI.
+fontmask.py — standalone cmap-remapping CLI.
 
     Screen shows ALPHA text. DOM / clipboard / scrapers get GAMMA text.
 
 GRAMMAR
-    python3 glyphweave.py ait=<file> bit=<file> gif=<file> [oof=<dir>] [...]
+    python3 fontmask.py ait=<file> bit=<file> gif=<file> [oof=<dir>] [...]
 
     ait=   alpha-input : text       what the READER SEES (the poem / body copy)
                                     formats: .txt .md .rtf .docx .odt .html/.htm
@@ -68,7 +68,7 @@ try:
     from fontTools.ttLib.tables._c_m_a_p import CmapSubtable
     from fontTools import subset
 except ImportError:
-    sys.exit("glyphWeave: missing dependency — run: pip install fonttools brotli")
+    sys.exit("fontMask: missing dependency — run: pip install fonttools brotli")
 
 
 # ==========================================================================
@@ -231,7 +231,7 @@ def extract_text(path: Path, lax: bool = False) -> str:
     if fn is None:
         # DETERMINISTIC: unknown extensions are read as plain UTF-8 text,
         # never guessed at by content sniffing.
-        sys.stderr.write(f"glyphWeave: note — unknown extension '{ext}', "
+        sys.stderr.write(f"fontMask: note — unknown extension '{ext}', "
                          f"reading {path.name} as plain text\n")
         fn = _txt_to_text
     try:
@@ -240,10 +240,10 @@ def extract_text(path: Path, lax: bool = False) -> str:
         if lax and fn is _txt_to_text:
             # DETERMINISTIC: invalid byte sequences become U+FFFD, one per
             # undecodable byte, per Python's stable 'replace' handler.
-            sys.stderr.write(f"glyphWeave: note — {path.name} is not valid "
+            sys.stderr.write(f"fontMask: note — {path.name} is not valid "
                              f"UTF-8; undecodable bytes replaced (lax=1)\n")
             return path.read_text(encoding="utf-8", errors="replace")
-        sys.exit(f"glyphWeave: {path.name} is not valid UTF-8 text "
+        sys.exit(f"fontMask: {path.name} is not valid UTF-8 text "
                  f"(pass lax=1 to substitute undecodable bytes)")
 
 
@@ -268,7 +268,7 @@ def build_tokens(gamma: str, alpha: str):
     # left-to-right, cycled with modulo. No shuffling, no hashing.
     stream = [c for c in gamma if not c.isspace()]
     if not stream:
-        raise SystemExit("glyphWeave: error — gif= text is empty after "
+        raise SystemExit("fontMask: error — gif= text is empty after "
                          "stripping whitespace; the warning content must be provided")
     tokens, k = [], 0
     for ch in alpha:
@@ -387,7 +387,7 @@ def make_shard_font(font_bytes: bytes, mapping: dict, out_path: Path):
 # ==========================================================================
 
 GUARD_JS = """\
-// remap-guard.js — companion to glyphWeave woff2 shards.
+// remap-guard.js — companion to fontMask woff2 shards.
 // 1. Keeps protected blocks hidden until shards load, so the gamma (DOM)
 //    layer is never flashed on a slow or blocked font fetch.
 // 2. Replaces the clipboard payload with a clean notice on copy — the shard
@@ -428,7 +428,7 @@ INDEX_TEMPLATE = """\
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>glyphWeave</title>
+<title>fontMask</title>
 <link rel="stylesheet" href="remap.css">
 {preloads}
 <style>body{{max-width:42rem;margin:4rem auto;padding:0 1.5rem;font-size:1.4rem;line-height:1.7}}
@@ -478,7 +478,7 @@ def write_bundle(out_dir, shards, blocks, family, shard_stem, notice,
     (out_dir / "remap.css").write_text("\n".join(css) + "\n")
 
     snippets = [
-        f'<!-- glyphWeave block: {bid} -->\n'
+        f'<!-- fontMask block: {bid} -->\n'
         f'<div class="gs-protect" translate="no">{render_runs(runs)}</div>'
         for bid, runs in blocks
     ]
@@ -520,7 +520,7 @@ def parse_args(argv):
     for tok in argv:
         key, sep, val = tok.partition("=")
         if not sep or key not in valid:
-            sys.exit(f"glyphWeave: unrecognized argument '{tok}'\n"
+            sys.exit(f"fontMask: unrecognized argument '{tok}'\n"
                      f"valid keys: ait= bit= gif= oof= fam= map= nul= lax=  "
                      f"(run with -h for the full grammar)")
         if key == "map":
@@ -529,7 +529,7 @@ def parse_args(argv):
             args[key] = val
     for req in ("ait", "bit", "gif"):
         if req not in args:
-            sys.exit(f"glyphWeave: missing required argument '{req}='  "
+            sys.exit(f"fontMask: missing required argument '{req}='  "
                      f"(run with -h for the full grammar)")
     return args
 
@@ -539,9 +539,9 @@ def main(argv):
     ait, bit, gif = Path(a["ait"]), Path(a["bit"]), Path(a["gif"])
     for p, k in ((ait, "ait"), (bit, "bit"), (gif, "gif")):
         if not p.is_file():
-            sys.exit(f"glyphWeave: {k}= file not found: {p}")
+            sys.exit(f"fontMask: {k}= file not found: {p}")
     if bit.suffix.lower() not in (".woff2", ".woff", ".ttf", ".otf"):
-        sys.exit(f"glyphWeave: bit= must be woff2/woff/ttf/otf, got '{bit.suffix}'")
+        sys.exit(f"fontMask: bit= must be woff2/woff/ttf/otf, got '{bit.suffix}'")
 
     # DETERMINISTIC: default output directory is derived from ait= only —
     # <ait-dir>/<ait-stem>-remap/ — never from cwd or environment.
@@ -552,7 +552,7 @@ def main(argv):
     alpha = extract_text(ait, lax).rstrip("\n")
     gamma = extract_text(gif, lax).strip("\n")
     if not alpha.strip():
-        sys.exit(f"glyphWeave: ait= yielded no text from {ait.name}")
+        sys.exit(f"fontMask: ait= yielded no text from {ait.name}")
 
     font_bytes = bit.read_bytes()
     probe = TTFont(io.BytesIO(font_bytes), recalcTimestamp=False)
@@ -568,7 +568,7 @@ def main(argv):
     shards, blocks, missing, passthrough = assign_shards(
         token_lists, char_to_glyph, glyph_order, lax=lax)
     if missing:
-        sys.exit(f"glyphWeave: not present in {bit.name}: {missing}\n"
+        sys.exit(f"fontMask: not present in {bit.name}: {missing}\n"
                  f"(every character of ait= must have a glyph in bit= — "
                  f"pass lax=1 to let uncovered characters through un-remapped)")
 
@@ -584,7 +584,7 @@ def main(argv):
                  with_index=a.get("nul") != "1", passthrough=passthrough)
 
     total = sum(len(s) for s in shards)
-    print(f"glyphWeave: {len(shards)} shard(s), {total} remapped codepoints -> {out_dir}/")
+    print(f"fontMask: {len(shards)} shard(s), {total} remapped codepoints -> {out_dir}/")
     for si, s in enumerate(shards):
         f = out_dir / f"{shard_stem}-s{si}.woff2"
         print(f"  {f.name:<28} {len(s):>4} mappings  {f.stat().st_size:>7,} bytes")

@@ -1,6 +1,6 @@
-# glyphWeave text-transposition example
+# fontMask text-transposition example
 
-This fixture demonstrates glyphWeave's core Unicode-to-glyph remapping behavior.
+This fixture demonstrates fontMask's core Unicode-to-glyph remapping behavior.
 
 The intended visible text is:
 
@@ -10,12 +10,12 @@ The alternate underlying text is:
 
     PROPRIETARY WORK DO NOT COPY
 
-glyphWeave resolves the visible characters to glyph outlines in the supplied
+fontMask resolves the visible characters to glyph outlines in the supplied
 font, then remaps those glyphs onto a Unicode stream derived from the
 underlying text.
 
 Where the same underlying code point would need to display different glyphs
-at different positions, glyphWeave distributes the conflicting mappings
+at different positions, fontMask distributes the conflicting mappings
 across multiple WOFF2 font subsets.
 
 ## Files
@@ -24,13 +24,13 @@ across multiple WOFF2 font subsets.
 - `underlying.txt` — alternate Unicode/notice text
 - `DejaVuSans.ttf` — font fixture used by this example
 - `DEJAVU-LICENSE.txt` — upstream license for the font fixture
-- `generated/` — output produced by glyphWeave
+- `generated/` — output produced by fontMask
 
 ## Reproduce the example
 
 Run this from the repository root:
 
-    python3 glyphweave.py \
+    python3 fontmask.py \
       ait=examples/text-transposition/visible.txt \
       bit=examples/text-transposition/DejaVuSans.ttf \
       gif=examples/text-transposition/underlying.txt \
